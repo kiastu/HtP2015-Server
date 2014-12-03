@@ -12,6 +12,7 @@ var express = require('express'),
   api = require('./routes/api'),
   http = require('http'),
   path = require('path');
+  compression = require('compression');
 
 var app = module.exports = express();
 
@@ -29,7 +30,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(methodOverride());
 app.use(express.static(path.join(__dirname, 'public')));
-
+app.use(compression());
 var env = process.env.NODE_ENV || 'development';
 
 // development only
@@ -43,7 +44,7 @@ if (env === 'production') {
 }
 
 
-/**
+/**11
  * Routes
  */
 
