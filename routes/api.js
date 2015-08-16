@@ -1,4 +1,4 @@
-var config = require('configFile');
+var config = require('config.js');
 var sendgrid = require('sendgrid')(config.sg_api_key);
 var parse = require('parse');
 
