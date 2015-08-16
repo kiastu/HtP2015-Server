@@ -12,7 +12,8 @@ var express = require('express'),
   api = require('./routes/api'),
   http = require('http'),
   path = require('path');
-  compression = require('compression');
+  compression = require('compression'),
+  request = require('request');
 
 var app = module.exports = express();
 
@@ -51,12 +52,17 @@ if (env === 'production') {
 // serve index and view partials
 app.get('/', routes.index);
 app.get('/partials/:name', routes.partials);
+app.get('/push', routes.push);
 
 // JSON API
 app.get('/api/name', api.name);
 
+app.get('/tweet', routes.tweet);
+
+app.post('/imgupdate', routes.imgupdate);
+
 // redirect all others to the index (HTML5 history)
-app.get('*', routes.index);
+app.get('*', routes.push);
 
 
 /**
@@ -64,5 +70,5 @@ app.get('*', routes.index);
  */
 
 http.createServer(app).listen(app.get('port'), function () {
-  console.log('Express server listening on port ' + app.get('port'));
+  console.log('Amelia Earbot is chilling on port: ' + app.get('port'));
 });
