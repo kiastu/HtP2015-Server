@@ -1,9 +1,14 @@
-/*
- * Serve JSON to our AngularJS client
- */
+var config = require('config.js');
+var sendgrid = require('sendgrid')(config.sg_api_key);
+var parse = require('parse');
 
-exports.name = function (req, res) {
-  res.json({
-    name: 'Bob'
-  });
-};
+exports.greetEmail = function(req,res){
+}
+
+exports.notifyAll = function(req,res){
+    var email = new sendgrid.Email();
+}
+
+exports.isNearby = function(req,res){
+
+}

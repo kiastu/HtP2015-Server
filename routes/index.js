@@ -80,8 +80,8 @@ exports.imgupdate = function (req, res) {
     var body = req.body;
     //download the image file.
 
-    var twitterRequest = function () {
-        var data = fs.readFileSync("../snapshots/" + body.name);
+    var twitterRequest = function (body) {
+        var data = fs.readFileSync("snapshots/" + body.name);
         // Make post request on media endpoint. Pass file data as media parameter
         client.post('media/upload', {
             media: data
@@ -94,7 +94,7 @@ exports.imgupdate = function (req, res) {
 
                 // Lets tweet it
                 var status = {
-                    status: jTweet.message,
+                    status: "This picture was taken at: "+body.long+","+body.lat,
                     media_ids: media.media_id_string // Pass the media id string
                 }
 
@@ -130,7 +130,7 @@ exports.imgupdate = function (req, res) {
     fs.writeFile("snapshots/" + body.name, body.img, 'base64', function (err) {
         if (!err) {
             console.log("Great success! File was saved!");
-            twitterRequest()
+            twitterRequest(body)
 
         } else {
             console.log(err);
