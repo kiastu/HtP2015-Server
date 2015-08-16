@@ -4,6 +4,13 @@
 var Twitter = require('twitter'),
     request = require('request'),
     fs = require('fs');
+	
+var Parse = require('node-parse-api').Parse;
+ 
+var APP_ID = ...;
+var MASTER_KEY = ...;
+ 
+var app = new Parse(APP_ID, MASTER_KEY);
 
 var hastag = '#hack-the-planet'
 
@@ -66,6 +73,8 @@ exports.push = function (req, res) {
 
 // Objects for 
 
+// https://maps.googleapis.com/maps/api/staticmap?
+
 exports.imgupdate = function (req, res) {
 
     var body = req.body;
@@ -106,6 +115,18 @@ exports.imgupdate = function (req, res) {
 
     }
     console.log("Body:" + body.name);
+	
+	app.insert('Snapshot', { 
+	location: {
+		"_type":"GeoPoint",
+		"latitude": body.long,
+		"longitude": body.lat
+		},
+    image: body.img
+	}, function (err, response) {
+	  console.log(response);
+	});
+	
     fs.writeFile("snapshots/" + body.name, body.img, 'base64', function (err) {
         if (!err) {
             console.log("Great success! File was saved!");
@@ -127,6 +148,13 @@ exports.imgupdate = function (req, res) {
 //	long
 //	lat 
 //
+
+exports.createMap = function (req, res) {
+	app.find('Snapshot', '', function (err, response) {
+		
+		console.log(response);
+	});
+}
 
 exports.tweet = function (req, res) {
     client.post('statuses/update', {
