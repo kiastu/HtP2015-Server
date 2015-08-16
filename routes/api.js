@@ -1,5 +1,4 @@
-var config = require('config.js');
-var sendgrid = require('sendgrid')(config.sg_api_key);
+var sendgrid = require('sendgrid')("");
 var parse = require('parse');
 
 exports.greetEmail = function(req,res){

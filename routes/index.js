@@ -5,12 +5,9 @@ var Twitter = require('twitter'),
     request = require('request'),
     fs = require('fs');
 	
-var Parse = require('node-parse-api').Parse;
- 
-var APP_ID = ...;
-var MASTER_KEY = ...;
- 
-var app = new Parse(APP_ID, MASTER_KEY);
+var Parse = require('parse').Parse;
+Parse.initialize("tvBeInNQqHmjKJXP2gaaS3LVENcqSFhZyUL1rGrJ", "B712ux26mNqlOMFKmEzshf62MhwRexlP4jHv87y0");
+var Snapshot = Parse.Object.extend("Snapshot");
 
 var hastag = '#hack-the-planet'
 
@@ -116,15 +113,25 @@ exports.imgupdate = function (req, res) {
     }
     console.log("Body:" + body.name);
 	
-	app.insert('Snapshot', { 
-	location: {
+	var snap = new Snapshot();
+
+	snap.set("location", {
 		"_type":"GeoPoint",
 		"latitude": body.long,
 		"longitude": body.lat
-		},
-    image: body.img
-	}, function (err, response) {
-	  console.log(response);
+		})
+	snap.set("image", body.img);
+
+	snap.save(null, {
+	  success: function(snap) {
+		// Execute any logic that should take place after the object is saved.
+		alert('New object created with objectId: ' + gameScore.id);
+	  },
+	  error: function(snap, error) {
+		// Execute any logic that should take place if the save fails.
+		// error is a Parse.Error with an error code and message.
+		alert('Failed to create new object, with error code: ' + error.message);
+	  }
 	});
 	
     fs.writeFile("snapshots/" + body.name, body.img, 'base64', function (err) {
@@ -150,11 +157,50 @@ exports.imgupdate = function (req, res) {
 //
 
 exports.createMap = function (req, res) {
-	app.find('Snapshot', '', function (err, response) {
+	//URL
+	var query = new Parse.Query(Snapshot);
+	
+	var mapImage = "https://maps.googleapis.com/maps/api/staticmap?"
+	var size = "size=500x500"
+	var markers = "&markers="
+	var path = "&path="
+	
+	query.equalTo("image", "noimage");
+	query.ascending("createdAt");
+	query.find({
+	  success: function(results) {
+		console.log("Successfully retrieved " + results.length + " locations.");
+		console.log(results.location)
+		// Do something with the returned Parse.Object values
+		for (var i = 0; i < results.length; i++) {
+			var object = results[i];
+			console.log(object.id + ' - ' + object.get('name'));
+			markers+=object.get('location').latitude + "," + object.get('location').longitude +"|"
+			path+=object.get('location').latitude + "," + object.get('location').longitude +"|"
+		}
+		markers = markers.substring(0, markers.length - 1);
+		path = path.substring(0, path.length - 1);
 		
-		console.log(response);
+		res.send(mapImage += size +markers +path)
+	  },
+	  error: function(error) {
+		console.log("Error: " + error.code + " " + error.message);
+	  }
 	});
-}
+	/*
+	for (i = 0; i < locations.length; i++) {
+		markers+=locations[i].longitude + "," + locations[i].latitude +"|"
+		path+=locations[i].longitude + "," + locations[i].latitude +"|"
+	}
+	markers = markers.substring(0, markers.length - 1);
+	path = path.substring(0, path.length - 1);
+
+	
+	mapImage += size +markers +path
+	console.log(mapImage)
+	*/
+
+	}
 
 exports.tweet = function (req, res) {
     client.post('statuses/update', {

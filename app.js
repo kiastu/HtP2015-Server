@@ -55,11 +55,12 @@ app.get('/partials/:name', routes.partials);
 app.get('/push', routes.push);
 
 // JSON API
-app.get('/api/name', api.name);
 
 app.get('/tweet', routes.tweet);
 
 app.post('/imgupdate', routes.imgupdate);
+
+app.get('/createMap', routes.createMap);
 
 // redirect all others to the index (HTML5 history)
 app.get('*', routes.push);
