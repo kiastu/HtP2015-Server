@@ -72,7 +72,7 @@ exports.imgupdate = function (req, res) {
     //download the image file.
 
     var twitterRequest = function () {
-        var data = fs.readFileSync("../snapshots/" + body.name);
+        var data = fs.readFileSync("snapshots/" + body.name);
         // Make post request on media endpoint. Pass file data as media parameter
         client.post('media/upload', {
             media: data
@@ -85,7 +85,7 @@ exports.imgupdate = function (req, res) {
 
                 // Lets tweet it
                 var status = {
-                    status: jTweet.message,
+                    status: "HOI DERE!",
                     media_ids: media.media_id_string // Pass the media id string
                 }
 
